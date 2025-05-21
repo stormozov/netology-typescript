@@ -4,10 +4,12 @@ module.exports = {
     'es2021': true,
     'node': true
   },
+  'parser': '@typescript-eslint/parser',
+  'plugins': ['@typescript-eslint'],
   'extends': 'eslint:recommended',
   'overrides': [
     {
-      'files': ['**/*/*.test.js'],
+      'files': ['**/*/*.test.ts'],
       'plugins': ['jest'],
       'extends': ['plugin:jest/recommended'],
       'rules': { 'jest/prefer-expect-assertions': 'off' }
@@ -43,6 +45,7 @@ module.exports = {
     'eol-last': [
       'error',
       'always'
-    ]
+    ],
+    'no-unused-vars': 'off'
   }
 }
