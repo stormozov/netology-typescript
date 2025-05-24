@@ -1,4 +1,4 @@
-import IBuyable from '../interfaces/IBuyable';
+import IBuyable from '../../interfaces/IBuyable';
 
 /**
  * Класс `Book` реализует интерфейс `IBuyable` и представляет книгу.

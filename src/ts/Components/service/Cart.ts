@@ -1,4 +1,4 @@
-import IBuyable from '../interfaces/IBuyable';
+import IBuyable from '../../interfaces/IBuyable';
 
 /**
  * Класс `Cart` представляет собой корзину для покупок.
