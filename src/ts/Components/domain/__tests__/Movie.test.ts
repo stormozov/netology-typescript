@@ -7,6 +7,7 @@ describe('Класс Movie', () => {
     id: 1,
     name: 'Мстители',
     price: 799,
+    isSingleInstance: true,
     originalName: 'The Avengers',
     yearOfRelease: 2012,
     country: 'США' as MovieCountry,
