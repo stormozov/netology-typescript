@@ -4,6 +4,9 @@ import IDuration from '../../interfaces/IDuration';
 import IMovie from '../../interfaces/IMovies';
 import { MovieCountry } from '../../types/movies';
 
+/**
+ * Класс `Movie` реализует интерфейс `IMovie` и `IBuyable`, а также представляет фильм.
+ */
 export default class Movie implements IBuyable, IMovie {
   readonly id: number;
   readonly name: string;
