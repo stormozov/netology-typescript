@@ -1,15 +1,23 @@
 import IBuyable from '../../interfaces/IBuyable';
 
 /**
- * Класс `MusicAlbum` реализует интерфейс `IBuyable` и представляет музыкальный альбом.
+ * Класс `MusicAlbum` представляет музыкальный альбом.
+ * 
+ * Реализует интерфейс `IBuyable`.
+ * 
+ * ### Поля:
+ * @param {number} id - Идентификатор альбома.
+ * @param {string} name - Название альбома.
+ * @param {string} author - Автор альбома.
+ * @param {number} price - Цена альбома.
+ * @param {boolean} isSingleInstance - Флаг, указывающий, можно ли добавлять 
+ * товар несколько раз в корзину.
  * 
  * ### Пример использования:
  * ```javascript
- * const musicAlbum = new MusicAlbum(1008, 'Meteora', 'Linkin Park', 900);
+ * const musicAlbum = new MusicAlbum(1008, 'Meteora', 'Linkin Park', 900, false);
  * console.log(musicAlbum); // Вывод: { id: 1008, name: 'Meteora', author: 'Linkin Park', price: 900 }
  * ```
- * 
- * @implements {IBuyable}
  */
 export default class MusicAlbum implements IBuyable {
   constructor(
@@ -17,6 +25,7 @@ export default class MusicAlbum implements IBuyable {
     readonly name: string,
     readonly author: string,
     readonly price: number,
+    readonly isSingleInstance: boolean = false,
   ) { }
 }
 

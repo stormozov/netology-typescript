@@ -1,4 +1,5 @@
 import IBuyable from '../../interfaces/IBuyable';
+import ICartItem from '../../interfaces/ICartItem';
 
 /**
  * Класс `Cart` представляет собой корзину для покупок.
@@ -15,8 +16,8 @@ import IBuyable from '../../interfaces/IBuyable';
  * ```javascript
  * const cart = new Cart();
  * 
- * const item1 = { name: 'Product A', price: 100 };
- * const item2 = { name: 'Product B', price: 150 };
+ * const item1 = { id: 1, name: 'Product A', price: 100, isSingleInstance: true };
+ * const item2 = { id: 2, name: 'Product B', price: 150, isSingleInstance: false };
  *
  * cart.add(item1);
  * cart.add(item2);
@@ -25,27 +26,7 @@ import IBuyable from '../../interfaces/IBuyable';
  * ```
  */
 export default class Cart {
-  private _items: IBuyable[] = [];
-
-  /**
-   * Добавляет товар один переданный в корзину.
-   * 
-   * ### Пример использования:
-   * ```javascript
-   * const cart = new Cart();
-   * 
-   * const item1 = { name: 'Product A', price: 100 };
-   * const item2 = { name: 'Product B', price: 150 };
-   * 
-   * cart.add(item1);
-   * cart.add(item2);
-   * 
-   * console.log(cart.items); // Вывод: [ item1, item2 ]
-   * ```
-   */
-  add(item: IBuyable): void {
-    this._items.push(item);
-  }
+  private _items: ICartItem[] = [];
 
   /**
    * Возвращает копию массива товаров в корзине.
@@ -63,8 +44,76 @@ export default class Cart {
    * console.log(cart.items); // Вывод: [ item1, item2 ]
    * ```
    */
-  get items(): IBuyable[] {
+  get items(): ICartItem[] {
     return [...this._items]; 
+  }
+
+  /**
+   * Добавляет товар в корзину.
+   * 
+   * Если товар уже есть в корзине и его можно добавить в корзину более одного раза, 
+   * то его количество увеличивается.
+   * 
+   * ### Параметры:
+   * @param {IBuyable} item - Товар, который нужно добавить в корзину.
+   * 
+   * ### Пример использования:
+   * ```javascript
+   * const cart = new Cart();
+   * 
+   * const item1 = { name: 'Product A', price: 100 };
+   * const item2 = { name: 'Product B', price: 150 };
+   * 
+   * cart.add(item1);
+   * cart.add(item2);
+   * 
+   * console.log(cart.items); // Вывод: [ item1, item2 ]
+   * ```
+   */
+  add(item: IBuyable): void {
+    const existingItem = this._items.find((cartItem) => cartItem.product.id === item.id);
+    
+    if (item.isSingleInstance) {
+      if (!existingItem) {
+        this._items.push({ product: item, quantity: 1 });
+      }
+    } else {
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        this._items.push({ product: item, quantity: 1 });
+      }
+    }
+  }
+
+  /**
+   * Увеличивает количество товара на один в корзине.
+   * 
+   * ### Параметры:
+   * @param {number} id - Идентификатор товара, которому нужно увеличить количество.
+   */
+  increaseQuantity(id: number): void {
+    const item = this._items[this.findIndexById(id)];
+    if ( item && !item.product.isSingleInstance ) item.quantity++;
+  }
+
+  /**
+   * Уменьшает количество товара на один в корзине или удаляет его по его идентификатору.
+   * 
+   * ### Параметры:
+   * @param {number} id - Идентификатор товара, который нужно удалить.
+   * 
+   * ### Примечание:
+   * Если количество товара равно 1 и товар не является единичным экземпляром, 
+   * товар будет удален из корзины.
+   */
+  decreaseQuantity(id: number): void {
+    const index = this.findIndexById(id);
+    
+    if (index !== -1) { 
+      const condition = this._items[index].quantity > 1 && !this._items[index].product.isSingleInstance;
+      condition ? this._items[index].quantity-- : this._items.splice(index, 1);
+    }
   }
 
   /**
@@ -84,7 +133,9 @@ export default class Cart {
    * ```
    */
   getTotalPrice(): number {
-    return this._items.reduce((total, item) => total + item.price, 0);
+    return this._items.reduce((total, item) => {
+      return total + item.product.price * item.quantity;
+    }, 0);
   }
 
   /**
@@ -104,7 +155,9 @@ export default class Cart {
    * ```
    */
   getTotalPriceWithDiscount(discount: number): number {
-    return this._items.reduce((total, item) => total + item.price * (1 - discount), 0);
+    return this._items.reduce((total, item) => {
+      return total + item.product.price * item.quantity * (1 - discount);
+    }, 0);
   }
 
   /**
@@ -151,6 +204,6 @@ export default class Cart {
    * ```
    */
   private findIndexById(id: number): number {
-    return this._items.findIndex((item) => item.id === id);
+    return this._items.findIndex((item) => item.product.id === id);
   }
 }
